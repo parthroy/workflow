@@ -5,7 +5,9 @@ ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
     NX_DAEMON=false \
-    NX_NO_CLOUD=true
+    NX_NO_CLOUD=true \
+    NX_PLUGIN_NO_TIMEOUTS=true \
+    NODE_OPTIONS="--max-old-space-size=4096"
 
 # Install all system dependencies in a single layer with cache mounts
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -70,7 +72,7 @@ RUN --mount=type=cache,target=/root/.bun/install/cache \
 COPY . .
 
 # Build both projects (already has NX_NO_CLOUD from base stage)
-RUN npx nx run-many --target=build --projects=react-ui,server-api --configuration production --parallel=2 --skip-nx-cache
+RUN npx nx run-many --target=build --projects=react-ui,server-api --configuration production --parallel=1 --skip-nx-cache
 
 # Install production dependencies only for the backend API
 RUN --mount=type=cache,target=/root/.bun/install/cache \
